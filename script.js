@@ -7,13 +7,14 @@ $(function () {
 				type: "buttonGroup",
 				buttons: [
 					{
-						text: "Incluir", icon: "plus", click: function () {
+						text: "Incluir", icon: "plus-outline", click: function () {
 							if (!$("#winCadastro").data("kendoWindow")) {
 								$("#winCadastro").kendoWindow({
 									modal: true,
 									width: "26%",
-									height: "30%",
-									visible: false
+									height: "33%",
+									visible: false,
+									title: "Cadastro"
 								})
 							}
 							$("#winCadastro").data("kendoWindow").center().open()
@@ -25,8 +26,9 @@ $(function () {
 								$("#winCadastro").kendoWindow({
 									modal: true,
 									width: "26%",
-									height: "30%",
-									visible: false
+									height: "33%",
+									visible: false,
+									title: "Edicao"
 								})
 							}
 							$("#winCadastro").data("kendoWindow").center().open()
@@ -40,6 +42,7 @@ $(function () {
 	});
 
 	$("#grid").kendoGrid({
+		height: "60%",
 		columns: [
 			{ field: "id" },
 			{ field: "produto" },
@@ -51,7 +54,13 @@ $(function () {
 			{ id: 3, produto: "Sofa", tipo: "Movel", valor: 700 },
 			{ id: 15, produto: "Televisao", tipo: "Eletrodomestico", valor: 2300 },
 			{ id: 58, produto: "Martelo", tipo: "Utilitario", valor: 80 }
-		]
+		],
+		sortable: true,
+		pageable: {
+			refresh: true,
+			pageSizes: true,
+			buttonCount: 5
+		}
 	})
 
 	$("#inputNome").kendoTextBox();
@@ -72,5 +81,23 @@ $(function () {
 
 	$("#inputAtivo").kendoSwitch({
 		checked: true
+	})
+
+	$("#botoesCadastro").kendoToolBar({
+		iconPosition: "left",
+		items: [
+			{
+				type: "spacer"
+			},
+			{
+				type: "button", text: "Gravar", icon: "save"
+			},
+			{
+				type: "button", text: "Excluir", icon: "trash"
+			},
+			{
+				type: "button", text: "Fechar", icon: "cancel"
+			}
+		]
 	})
 });
