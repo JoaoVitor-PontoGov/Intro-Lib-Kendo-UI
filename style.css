@@ -1,0 +1,19 @@
+#cadastro {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 20px;
+}
+
+#mesmaLinha {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  width: 90%;
+}
+
+#cadastro .k-textbox,
+#cadastro .k-dropdown,
+#cadastro .k-numerictextbox {
+  width: 90%
+}

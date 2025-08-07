@@ -52,16 +52,34 @@
 </head>
 
 <body>
-  <div class="k-block">
-    <div class="k-header">Header</div>
-    Block with header
-  </div>
 
   <ul id="toolBar"></ul>
 
   <div id="grid"></div>
 
-  <div id="winInserirEditar"></div>
+  <div id="winCadastro" style="display: none;">
+    <form id="cadastro">
+      <label for="nome">Nome:</label>
+      <input name="nome" id="inputNome" placeholder="Nome">
+
+      <label for="categoria">Categoria:</label>
+      <input name="categoria" id="inputCategoria" placeholder="Categoria">
+
+      <label for="preco">Preco:</label>
+      <input name="preco" id="inputPreco" placeholder="Preco">
+
+      <div id="mesmaLinha">
+
+        <label for="dataCadastro">Data de Cadastro:</label>
+        <input ame="dataCadastro" id="inputDataCadastro">
+
+        <label for="ativo">Ativo?</label>
+        <input name="ativo" id="inputAtivo">
+
+      </div>
+    </form>
+  </div>
+
 </body>
 
 </html>

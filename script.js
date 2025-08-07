@@ -2,20 +2,40 @@ $(function () {
 	$("#toolBar").kendoToolBar({
 		iconPosition: "before",
 		items: [
+			{ type: "spacer" },
 			{
-				type: "button", text: "Incluir", click: function () {
-					if (!$("#winInserirEditar").data("kendoWindow")) {
-						$("#winInserirEditar").kendoWindow({
-							modal: true,
-							width: "50%",
-							height: "25%",
-							visible: false,
-						})
+				type: "buttonGroup",
+				buttons: [
+					{
+						text: "Incluir", icon: "plus", click: function () {
+							if (!$("#winCadastro").data("kendoWindow")) {
+								$("#winCadastro").kendoWindow({
+									modal: true,
+									width: "26%",
+									height: "30%",
+									visible: false
+								})
+							}
+							$("#winCadastro").data("kendoWindow").center().open()
+						}
+					},
+					{
+						text: "Editar", icon: "pencil", click: function () {
+							if (!$("#winCadastro").data("kendoWindow")) {
+								$("#winCadastro").kendoWindow({
+									modal: true,
+									width: "26%",
+									height: "30%",
+									visible: false
+								})
+							}
+							$("#winCadastro").data("kendoWindow").center().open()
+						}
 					}
 
-					$("#winInserirEditar").data("kendoWindow").center().open()
-				}
-			},
+
+				]
+			}
 		]
 	});
 
@@ -32,5 +52,25 @@ $(function () {
 			{ id: 15, produto: "Televisao", tipo: "Eletrodomestico", valor: 2300 },
 			{ id: 58, produto: "Martelo", tipo: "Utilitario", valor: 80 }
 		]
+	})
+
+	$("#inputNome").kendoTextBox();
+
+	$("#inputCategoria").kendoDropDownList({
+		dataSource: [
+			{ categoria: "Movel" },
+			{ categoria: "Eletrodomestico" },
+			{ categoria: "Utilitario" }
+		],
+		dataTextField: "categoria",
+		dataValueField: "categoria"
+	})
+
+	$("#inputPreco").kendoNumericTextBox();
+
+	$("#inputDataCadastro").kendoDatePicker();
+
+	$("#inputAtivo").kendoSwitch({
+		checked: true
 	})
 });
