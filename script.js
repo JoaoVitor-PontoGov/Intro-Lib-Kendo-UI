@@ -66,6 +66,7 @@ $(function () {
 	$("#inputNome").kendoTextBox();
 
 	$("#inputCategoria").kendoDropDownList({
+		optionLabel: "Selecione uma categoria...",
 		dataSource: [
 			{ categoria: "Movel" },
 			{ categoria: "Eletrodomestico" },
@@ -75,7 +76,10 @@ $(function () {
 		dataValueField: "categoria"
 	})
 
-	$("#inputPreco").kendoNumericTextBox();
+	$("#inputPreco").kendoNumericTextBox({
+		min: 0,
+		format: "n0"
+	});
 
 	$("#inputDataCadastro").kendoDatePicker();
 
@@ -90,7 +94,29 @@ $(function () {
 				type: "spacer"
 			},
 			{
-				type: "button", text: "Gravar", icon: "save"
+				type: "button", text: "Gravar", icon: "save", click: function () {
+					var mensagens = "";
+					if ($("#inputNome").data("kendoTextBox").value() == "") {
+						mensagens += "<li>O campo <strong>nome</strong> e obrigatorio</li>"
+					}
+
+					if ($("#inputCategoria").data("kendoDropDownList").value() == "") {
+						mensagens += "<li>Voce deve selecionar uma <strong>categoria</strong></li>"
+					}
+
+					if ($("#inputPreco").data("kendoNumericTextBox").value() == "") {
+						mensagens += "<li>O <strong>preco</strong> deve ser um valor positivo</li>"
+					}
+
+					if (mensagens) {
+						$("#mensagensValidacao").html(mensagens)
+						$("#validacao").fadeIn("fast")
+					}
+
+					$("#botaoValidacao").click(function () {
+						$("#validacao").fadeOut("fast")
+					})
+				}
 			},
 			{
 				type: "button", text: "Excluir", icon: "trash"
@@ -100,4 +126,6 @@ $(function () {
 			}
 		]
 	})
+
+
 });

@@ -21,3 +21,19 @@
 #botoesCadastro {
   width: 90%;
 }
+
+#validacao {
+  z-index: 22000;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(160, 160, 160, 0.25);
+  flex-direction: column;
+  align-items: center;
+}
+
+#validacao button,
+#mensagensValidacao {
+  padding: 20px;
+  border-radius: 8px;
+}
