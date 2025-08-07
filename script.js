@@ -127,5 +127,26 @@ $(function () {
 		]
 	})
 
+	$("#preview").kendoTabStrip({
+		dataTextField: "text",
+		dataSource: [
+			{ text: "Detalhes" }
+		],
+
+		select: function (e) {
+			if ($(e.item).text() === "Detalhes") {
+
+				$("#previewNome").kendoTextBox({
+					readonly: true,
+				});
+
+				$("#detalhes").hide()
+				$("#detalhes").fadeIn();
+
+			}
+		}
+	})
+
+
 
 });
