@@ -17,11 +17,21 @@ $(function () {
 									title: "Cadastro"
 								})
 							}
+							$("#inputNome").val("");
+							$("#inputCategoria").data("kendoDropDownList").value("");
+							$("#inputPreco").data("kendoNumericTextBox").value(0);
+							$("#inputDataCadastro").val("");
+							$("#inputAtivo").val("");
+
+							$("#botoesCadastro").data("kendoToolBar").enable("#btnExcluir", false)
+
 							$("#winCadastro").data("kendoWindow").center().open()
+
+
 						}
 					},
 					{
-						text: "Editar", id: "btnEditar", icon: "pencil", enable: false, click: function () {
+						text: "Editar", id: "btnCadEditar", icon: "pencil", enable: false, click: function () {
 							if (!$("#winCadastro").data("kendoWindow")) {
 								$("#winCadastro").kendoWindow({
 									modal: true,
@@ -31,6 +41,21 @@ $(function () {
 									title: "Edicao"
 								})
 							}
+							var grid = $("#grid").data("kendoGrid")
+							var campoSelecionado = grid.dataItem(grid.select())
+
+							$("#inputNome").val(campoSelecionado.nome)
+							$("#inputCategoria").data("kendoDropDownList").value(campoSelecionado.categoria)
+							$("#inputPreco").data("kendoNumericTextBox").value(campoSelecionado.valor)
+							$("#inputDataCadastro").val(campoSelecionado.dataCadastro)
+							$("#inputAtivo").data("kendoSwitch").value(campoSelecionado.ativo)
+
+
+							$("#botoesCadastro").data("kendoToolBar").enable("#btnExcluir")
+
+							console.log("!")
+
+
 							$("#winCadastro").data("kendoWindow").center().open()
 						}
 					}
@@ -43,6 +68,7 @@ $(function () {
 	$("#grid").kendoGrid({
 		height: "60%",
 		columns: [
+			{ field: "id", title: "ID" },
 			{ field: "nome", title: "Nome", type: "string" },
 			{ field: "categoria", title: "Categoria", type: "string" },
 			{ field: "valor", title: "Valor", type: "number", format: "{0:c2}" },
@@ -75,12 +101,25 @@ $(function () {
 			buttonCount: 5
 		},
 		change: function () {
-			console.log("change");
 			var selected = this.select();
 
 			var toolbar = $("#toolBar").data("kendoToolBar");
+			var cadEdicao = $("#botoesCadastro").data("kendoToolBar")
 
-			toolbar.enable("#btnEditar");
+			toolbar.enable("#btnCadEditar");
+
+			var grid = $("#grid").data("kendoGrid")
+			var campoSelecionado = grid.dataItem(grid.select())
+
+			if (campoSelecionado) {
+
+				$("#previewNome").val(campoSelecionado.nome)
+				$("#previewCategoria").data("kendoDropDownList").value(campoSelecionado.categoria)
+				$("#previewValor").val(campoSelecionado.valor)
+				$("#previewDataCadastro").val(campoSelecionado.dataCadastro)
+				$("#previewAtivo").data("kendoSwitch").value(campoSelecionado.ativo)
+
+			}
 
 		}
 
@@ -159,7 +198,7 @@ $(function () {
 				}
 			},
 			{
-				type: "button", text: "Excluir", icon: "trash"
+				type: "button", id: "btnExcluir", text: "Excluir", icon: "trash", enable: false
 			},
 			{
 				type: "button", text: "Fechar", icon: "cancel", click: function () {
@@ -199,7 +238,6 @@ $(function () {
 	$("#previewAtivo").kendoSwitch({
 		checked: true
 	})
-
 
 
 });
