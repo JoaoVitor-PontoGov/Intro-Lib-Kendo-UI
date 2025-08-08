@@ -4,7 +4,7 @@
 <head>
   <meta charset="ISO-8859-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Lib Kendo UI</title>
 
   <link href="lib/icons/pg.favicon.png" rel="shortcut icon">
 
@@ -81,15 +81,19 @@
     </form>
   </div>
 
-  <div id="validacao" style="display: none;">
-    <ul id="mensagensValidacao"></ul>
-    <button id="botaoValidacao">OK</button>
+  <div id="modal" style="display: none;">
+    <div id="validacao">
+      <h2>Atencao!</h2>
+      <ul id="mensagensValidacao"></ul>
+      <button id="botaoValidacao">OK</button>
+    </div>
   </div>
 
   <div id="preview"></div>
 
-  <div id='detalhes' style='display: none;'>
-    <label>Nome:</label><input id=' previewNome'>
+  <div id='detalhes' class="k-state-active">
+    <label>Nome:</label>
+    <input id=' previewNome'>
     <label>Categoria:</label>
     <input id='previewCategoria'>
     <label>Valor:</label>

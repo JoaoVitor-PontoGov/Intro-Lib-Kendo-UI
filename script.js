@@ -21,7 +21,7 @@ $(function () {
 						}
 					},
 					{
-						text: "Editar", icon: "pencil", click: function () {
+						text: "Editar", id: "btnEditar", icon: "pencil", enable: false, click: function () {
 							if (!$("#winCadastro").data("kendoWindow")) {
 								$("#winCadastro").kendoWindow({
 									modal: true,
@@ -35,7 +35,6 @@ $(function () {
 						}
 					}
 
-
 				]
 			}
 		]
@@ -44,23 +43,47 @@ $(function () {
 	$("#grid").kendoGrid({
 		height: "60%",
 		columns: [
-			{ field: "id" },
-			{ field: "produto" },
-			{ field: "tipo" },
-			{ field: "valor" }
+			{ field: "nome", title: "Nome", type: "string" },
+			{ field: "categoria", title: "Categoria", type: "string" },
+			{ field: "valor", title: "Valor", type: "number", format: "{0:c2}" },
+			{ field: "dataCadastro", title: "Data de Cadastro", type: "date", format: "{0:d}" },
+			{
+				field: "ativo", title: "Ativo:", template: function (produto) {
+
+					if (produto.ativo == "true") {
+						return "Sim"
+					} else {
+						return "Nao"
+					}
+				}, type: "string"
+			}
 		],
 		columnMenu: true,
-		dataSource: [
-			{ id: 3, produto: "Sofa", tipo: "Movel", valor: 700 },
-			{ id: 15, produto: "Televisao", tipo: "Eletrodomestico", valor: 2300 },
-			{ id: 58, produto: "Martelo", tipo: "Utilitario", valor: 80 }
-		],
+		selectable: "row",
+		dataSource: {
+			transport: {
+				read: function (options) {
+					options.success(JSON.parse(localStorage.getItem("produtos")) || [])
+				}
+			}
+
+		},
 		sortable: true,
 		pageable: {
 			refresh: true,
 			pageSizes: true,
 			buttonCount: 5
+		},
+		change: function () {
+			console.log("change");
+			var selected = this.select();
+
+			var toolbar = $("#toolBar").data("kendoToolBar");
+
+			toolbar.enable("#btnEditar");
+
 		}
+
 	})
 
 	$("#inputNome").kendoTextBox();
@@ -77,8 +100,7 @@ $(function () {
 	})
 
 	$("#inputPreco").kendoNumericTextBox({
-		min: 0,
-		format: "n0"
+		min: 0
 	});
 
 	$("#inputDataCadastro").kendoDatePicker();
@@ -110,11 +132,29 @@ $(function () {
 
 					if (mensagens) {
 						$("#mensagensValidacao").html(mensagens)
-						$("#validacao").fadeIn("fast")
+						$("#modal").fadeIn("fast")
+					} else {
+						const produtos = JSON.parse(localStorage.getItem("produtos")) || []
+
+
+
+						produtos.push({
+							nome: $("#inputNome").val(),
+							categoria: $("#inputCategoria").val(),
+							valor: parseFloat($("#inputPreco").val()),
+							dataCadastro: $("#inputDataCadastro").val(),
+							ativo: $("#inputAtivo").data("kendoSwitch").value()
+						})
+
+						localStorage.setItem("produtos", JSON.stringify(produtos))
+
+						$("#grid").data("kendoGrid").dataSource.read();
+						$("#winCadastro").data("kendoWindow").close()
+
 					}
 
 					$("#botaoValidacao").click(function () {
-						$("#validacao").fadeOut("fast")
+						$("#modal").fadeOut("fast")
 					})
 				}
 			},
@@ -122,7 +162,9 @@ $(function () {
 				type: "button", text: "Excluir", icon: "trash"
 			},
 			{
-				type: "button", text: "Fechar", icon: "cancel"
+				type: "button", text: "Fechar", icon: "cancel", click: function () {
+					$("#winCadastro").data("kendoWindow").close()
+				}
 			}
 		]
 	})
@@ -131,20 +173,31 @@ $(function () {
 		dataTextField: "text",
 		dataSource: [
 			{ text: "Detalhes" }
+		]
+	})
+
+	$("#previewNome").kendoTextBox();
+
+	$("#previewCategoria").kendoDropDownList({
+		optionLabel: "Selecione uma categoria...",
+		dataSource: [
+			{ categoria: "Movel" },
+			{ categoria: "Eletrodomestico" },
+			{ categoria: "Utilitario" }
 		],
+		dataTextField: "categoria",
+		dataValueField: "categoria"
+	})
 
-		select: function (e) {
-			if ($(e.item).text() === "Detalhes") {
+	$("#previewPreco").kendoNumericTextBox({
+		min: 0,
+		format: "n0"
+	});
 
-				$("#previewNome").kendoTextBox({
-					readonly: true,
-				});
+	$("#previewDataCadastro").kendoDatePicker();
 
-				$("#detalhes").hide()
-				$("#detalhes").fadeIn();
-
-			}
-		}
+	$("#previewAtivo").kendoSwitch({
+		checked: true
 	})
 
 
