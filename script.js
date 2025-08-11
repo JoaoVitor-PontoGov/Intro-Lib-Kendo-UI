@@ -53,8 +53,6 @@ $(function () {
 
 							$("#botoesCadastro").data("kendoToolBar").enable("#btnExcluir")
 
-							console.log("!")
-
 
 							$("#winCadastro").data("kendoWindow").center().open()
 						}
@@ -173,11 +171,11 @@ $(function () {
 						$("#mensagensValidacao").html(mensagens)
 						$("#modal").fadeIn("fast")
 					} else {
+						var ultimoID = localStorage.getItem("ultimoID") || 1
 						const produtos = JSON.parse(localStorage.getItem("produtos")) || []
 
-
-
 						produtos.push({
+							id: ultimoID,
 							nome: $("#inputNome").val(),
 							categoria: $("#inputCategoria").val(),
 							valor: parseFloat($("#inputPreco").val()),
@@ -186,10 +184,10 @@ $(function () {
 						})
 
 						localStorage.setItem("produtos", JSON.stringify(produtos))
+						localStorage.setItem("ultimoID", (ultimoID + 1))
 
 						$("#grid").data("kendoGrid").dataSource.read();
 						$("#winCadastro").data("kendoWindow").close()
-
 					}
 
 					$("#botaoValidacao").click(function () {
@@ -198,7 +196,17 @@ $(function () {
 				}
 			},
 			{
-				type: "button", id: "btnExcluir", text: "Excluir", icon: "trash", enable: false
+				type: "button", id: "btnExcluir", text: "Excluir", icon: "trash", enable: false, click: function () {
+					var grid = $("#grid").data("kendoGrid")
+					var campoSelecionado = grid.dataItem(grid.select())
+
+					grid.dataSource.remove(campoSelecionado);
+
+
+					localStorage.setItem("produtos", JSON.stringify(grid.dataSource.data()))
+
+					$("#winCadastro").data("kendoWindow").close()
+				}
 			},
 			{
 				type: "button", text: "Fechar", icon: "cancel", click: function () {
@@ -238,6 +246,8 @@ $(function () {
 	$("#previewAtivo").kendoSwitch({
 		checked: true
 	})
+
+
 
 
 });
