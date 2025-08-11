@@ -12,11 +12,12 @@ $(function () {
 								$("#winCadastro").kendoWindow({
 									modal: true,
 									width: "26%",
-									height: "33%",
+									height: "40%",
 									visible: false,
 									title: "Cadastro"
 								})
 							}
+							$("#inputID").val("");
 							$("#inputNome").val("");
 							$("#inputCategoria").data("kendoDropDownList").value("");
 							$("#inputPreco").data("kendoNumericTextBox").value(0);
@@ -36,7 +37,7 @@ $(function () {
 								$("#winCadastro").kendoWindow({
 									modal: true,
 									width: "26%",
-									height: "33%",
+									height: "40%",
 									visible: false,
 									title: "Edicao"
 								})
@@ -44,6 +45,7 @@ $(function () {
 							var grid = $("#grid").data("kendoGrid")
 							var campoSelecionado = grid.dataItem(grid.select())
 
+							$("#inputID").val(campoSelecionado.id)
 							$("#inputNome").val(campoSelecionado.nome)
 							$("#inputCategoria").data("kendoDropDownList").value(campoSelecionado.categoria)
 							$("#inputPreco").data("kendoNumericTextBox").value(campoSelecionado.valor)
@@ -66,13 +68,13 @@ $(function () {
 	$("#grid").kendoGrid({
 		height: "60%",
 		columns: [
-			{ field: "id", title: "ID" },
+			{ field: "id", title: "ID", width: "10%" },
 			{ field: "nome", title: "Nome", type: "string" },
 			{ field: "categoria", title: "Categoria", type: "string" },
-			{ field: "valor", title: "Valor", type: "number", format: "{0:c2}" },
-			{ field: "dataCadastro", title: "Data de Cadastro", type: "date", format: "{0:d}" },
+			{ field: "valor", title: "Valor", type: "number", format: "{0:c2}", width: "10%" },
+			{ field: "dataCadastro", title: "Data de Cadastro", type: "date", format: "{0:d}", width: "10%" },
 			{
-				field: "ativo", title: "Ativo:", template: function (produto) {
+				field: "ativo", title: "Ativo:", width: "10%", template: function (produto) {
 
 					if (produto.ativo == "true") {
 						return "Sim"
@@ -111,9 +113,10 @@ $(function () {
 
 			if (campoSelecionado) {
 
+				$("#previewID").val(campoSelecionado.id)
 				$("#previewNome").val(campoSelecionado.nome)
 				$("#previewCategoria").data("kendoDropDownList").value(campoSelecionado.categoria)
-				$("#previewValor").val(campoSelecionado.valor)
+				$("#previewValor").data("kendoNumericTextBox").value(campoSelecionado.valor)
 				$("#previewDataCadastro").val(campoSelecionado.dataCadastro)
 				$("#previewAtivo").data("kendoSwitch").value(campoSelecionado.ativo)
 
@@ -121,6 +124,10 @@ $(function () {
 
 		}
 
+	})
+
+	$("#inputID").kendoTextBox({
+		readonly: true
 	})
 
 	$("#inputNome").kendoTextBox();
@@ -170,24 +177,52 @@ $(function () {
 					if (mensagens) {
 						$("#mensagensValidacao").html(mensagens)
 						$("#modal").fadeIn("fast")
+
+
 					} else {
-						var ultimoID = localStorage.getItem("ultimoID") || 1
-						const produtos = JSON.parse(localStorage.getItem("produtos")) || []
 
-						produtos.push({
-							id: ultimoID,
-							nome: $("#inputNome").val(),
-							categoria: $("#inputCategoria").val(),
-							valor: parseFloat($("#inputPreco").val()),
-							dataCadastro: $("#inputDataCadastro").val(),
-							ativo: $("#inputAtivo").data("kendoSwitch").value()
-						})
+						if ($("#inputID").val() == "") {
+							var ultimoID = parseInt(localStorage.getItem("ultimoID") || 0)
+							const produtos = JSON.parse(localStorage.getItem("produtos")) || []
+							ultimoID++;
 
-						localStorage.setItem("produtos", JSON.stringify(produtos))
-						localStorage.setItem("ultimoID", (ultimoID + 1))
+							produtos.push({
+								id: ultimoID,
+								nome: $("#inputNome").val(),
+								categoria: $("#inputCategoria").val(),
+								valor: parseFloat($("#inputPreco").val()),
+								dataCadastro: $("#inputDataCadastro").val(),
+								ativo: $("#inputAtivo").data("kendoSwitch").value()
+							})
 
-						$("#grid").data("kendoGrid").dataSource.read();
-						$("#winCadastro").data("kendoWindow").close()
+							console.log("cadastrando", produtos)
+							localStorage.setItem("produtos", JSON.stringify(produtos))
+							localStorage.setItem("ultimoID", ultimoID)
+
+							$("#grid").data("kendoGrid").dataSource.read();
+							$("#winCadastro").data("kendoWindow").close()
+
+						} else {
+							const produtos = JSON.parse(localStorage.getItem("produtos")) || []
+							var grid = $("#grid").data("kendoGrid")
+							var campoSelecionado = grid.dataItem(grid.select())
+
+							const index = produtos.findIndex((a) => a.id == campoSelecionado.id)
+
+							produtos[index] = {
+								id: produtos[index].id,
+								nome: $("#inputNome").val(),
+								categoria: $("#inputCategoria").val(),
+								valor: parseFloat($("#inputPreco").val()),
+								dataCadastro: $("#inputDataCadastro").val(),
+								ativo: $("#inputAtivo").data("kendoSwitch").value()
+							}
+
+							console.log("editando", produtos)
+							localStorage.setItem("produtos", JSON.stringify(produtos))
+							$("#grid").data("kendoGrid").dataSource.read();
+							$("#winCadastro").data("kendoWindow").close()
+						}
 					}
 
 					$("#botaoValidacao").click(function () {
@@ -197,14 +232,14 @@ $(function () {
 			},
 			{
 				type: "button", id: "btnExcluir", text: "Excluir", icon: "trash", enable: false, click: function () {
+					const produtos = JSON.parse(localStorage.getItem("produtos")) || []
 					var grid = $("#grid").data("kendoGrid")
 					var campoSelecionado = grid.dataItem(grid.select())
 
-					grid.dataSource.remove(campoSelecionado);
+					const novosDados = produtos.filter(a => (a.id !== campoSelecionado.id))
 
-
-					localStorage.setItem("produtos", JSON.stringify(grid.dataSource.data()))
-
+					localStorage.setItem("produtos", JSON.stringify(novosDados))
+					$("#grid").data("kendoGrid").dataSource.read();
 					$("#winCadastro").data("kendoWindow").close()
 				}
 			},
@@ -223,7 +258,13 @@ $(function () {
 		]
 	})
 
-	$("#previewNome").kendoTextBox();
+	$("#previewID").kendoTextBox({
+		readonly: true
+	})
+
+	$("#previewNome").kendoTextBox({
+		readonly: true
+	})
 
 	$("#previewCategoria").kendoDropDownList({
 		optionLabel: "Selecione uma categoria...",
@@ -233,21 +274,27 @@ $(function () {
 			{ categoria: "Utilitario" }
 		],
 		dataTextField: "categoria",
-		dataValueField: "categoria"
+		dataValueField: "categoria",
+		enable: false
 	})
 
-	$("#previewPreco").kendoNumericTextBox({
+	$("#previewValor").kendoNumericTextBox({
 		min: 0,
-		format: "n0"
+		format: "c2"
 	});
+
+	$("#previewValor").data("kendoNumericTextBox").readonly(true)
 
 	$("#previewDataCadastro").kendoDatePicker();
 
+	$("#previewDataCadastro").data("kendoDatePicker").enable(false);
+
+
 	$("#previewAtivo").kendoSwitch({
 		checked: true
-	})
+	});
 
-
+	$("#previewAtivo").data("kendoSwitch").enable(false);
 
 
 });
